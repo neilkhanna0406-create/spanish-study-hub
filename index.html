@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Español II — Study Hub</title>
+<style>* { margin:0; padding:0; box-sizing:border-box; } body { font-family:'Segoe UI',system-ui,sans-serif; background:#0f0f0f; }</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+/* ───────── DATA ───────── */
+const TOPICS = {
+  preterite: { name: "Preterite Tense", icon: "⏮", type: "quiz" },
+  imperfect: { name: "Imperfect Tense", icon: "🔄", type: "quiz" },
+  pret_vs_imp: { name: "Preterite vs Imperfect", icon: "⚖️", type: "quiz" },
+  reflexives: { name: "Reflexive Verbs", icon: "🪞", type: "flashcard" },
+  time_markers: { name: "Time Markers", icon: "⏰", type: "flashcard" },
+  commands_reg: { name: "Regular Tú Commands", icon: "👉", type: "quiz" },
+  commands_irreg: { name: "Irregular Tú Commands", icon: "⚡", type: "flashcard" },
+  gustar_jugar: { name: "Gustar & Jugar", icon: "❤️", type: "quiz" },
+  ir_a_inf: { name: "Ir a + Infinitive", icon: "🚀", type: "quiz" },
+  present_prog: { name: "Present Progressive", icon: "🏃", type: "quiz" },
+  yo_go_stem: { name: "Irregular Yo & Stem-Changers", icon: "🧬", type: "quiz" },
+  dop_iop: { name: "Direct & Indirect Object Pronouns", icon: "🎯", type: "quiz" },
+  food_vocab: { name: "Food Vocabulary", icon: "🍽️", type: "flashcard" },
+  travel_vocab: { name: "Travel & City Vocab", icon: "✈️", type: "flashcard" },
+  body_senses: { name: "Body Parts & Senses", icon: "🫀", type: "flashcard" },
+  pastimes: { name: "Pastimes", icon: "🎨", type: "flashcard" },
+  clothing_shop: { name: "Clothing & Shopping", icon: "👗", type: "flashcard" },
+  health_illness: { name: "Health & Illness", icon: "🏥", type: "flashcard" },
+  hygiene_products: { name: "Hygiene Products", icon: "🧴", type: "flashcard" },
+  sports_equip: { name: "Sports & Equipment", icon: "⚽", type: "flashcard" },
+  neg_commands: { name: "Negative Tú Commands", icon: "🚫", type: "quiz" },
+};
+
+const FLASHCARDS = {
+  reflexives: [
+    { front: "despertarse", back: "to wake up — me despierto, te despiertas, se despierta (e→ie)" },
+    { front: "levantarse", back: "to get up — me levanto, te levantas, se levanta" },
+    { front: "ducharse", back: "to shower — me ducho, te duchas, se ducha" },
+    { front: "bañarse", back: "to bathe — me baño, te bañas, se baña" },
+    { front: "cepillarse", back: "to brush (hair/teeth) — me cepillo, te cepillas, se cepilla" },
+    { front: "lavarse", back: "to wash oneself — me lavo, te lavas, se lava" },
+    { front: "peinarse", back: "to comb one's hair — me peino, te peinas, se peina" },
+    { front: "vestirse", back: "to get dressed — me visto, te vistes, se viste (e→i)" },
+    { front: "maquillarse", back: "to put on makeup — me maquillo, te maquillas, se maquilla" },
+    { front: "acostarse", back: "to go to bed — me acuesto, te acuestas, se acuesta (o→ue)" },
+    { front: "dormirse", back: "to fall asleep — me duermo, te duermes, se duerme (o→ue)" },
+    { front: "afeitarse", back: "to shave — me afeito, te afeitas, se afeita" },
+    { front: "Reflexive pronoun placement", back: "Before conjugated verb: Yo me lavo\nOR attached to infinitive: Quiero lavarme" },
+  ],
+  time_markers: [
+    { front: "ayer", back: "yesterday (PRETERITE)" },
+    { front: "anoche", back: "last night (PRETERITE)" },
+    { front: "la semana pasada", back: "last week (PRETERITE)" },
+    { front: "el mes pasado", back: "last month (PRETERITE)" },
+    { front: "el año pasado", back: "last year (PRETERITE)" },
+    { front: "una vez / dos veces", back: "once / twice (PRETERITE)" },
+    { front: "de repente", back: "suddenly (PRETERITE)" },
+    { front: "siempre", back: "always (IMPERFECT)" },
+    { front: "a veces", back: "sometimes (IMPERFECT)" },
+    { front: "todos los días", back: "every day (IMPERFECT)" },
+    { front: "de niño/a", back: "as a child (IMPERFECT)" },
+    { front: "generalmente", back: "generally (IMPERFECT)" },
+    { front: "frecuentemente", back: "frequently (IMPERFECT)" },
+    { front: "a menudo", back: "often (IMPERFECT)" },
+    { front: "ahora", back: "now (PRESENT)" },
+    { front: "hoy", back: "today (PRESENT)" },
+    { front: "esta mañana / esta tarde / esta noche", back: "this morning / this afternoon / tonight" },
+    { front: "mañana", back: "tomorrow (IR A + INF)" },
+    { front: "la próxima semana", back: "next week (IR A + INF)" },
+    { front: "el próximo año", back: "next year (IR A + INF)" },
+  ],
+  commands_irreg: [
+    { front: "tener →", back: "ten" },
+    { front: "hacer →", back: "haz" },
+    { front: "poner →", back: "pon" },
+    { front: "venir →", back: "ven" },
+    { front: "salir →", back: "sal" },
+    { front: "ser →", back: "sé" },
+    { front: "decir →", back: "di" },
+    { front: "ir →", back: "ve" },
+    { front: "🧠 Memory trick", back: "Ven Di Sal Haz Ten Ve Pon Sé\n→ \"Vin Diesel Has Ten Weapons Pon Sé\"" },
+  ],
+  food_vocab: [
+    { front: "el desayuno / el almuerzo / la cena", back: "breakfast / lunch / dinner" },
+    { front: "el arroz", back: "rice" },{ front: "la carne", back: "meat" },
+    { front: "el pollo", back: "chicken" },{ front: "el pescado", back: "fish" },
+    { front: "la ensalada", back: "salad" },{ front: "los frijoles", back: "beans" },
+    { front: "el huevo", back: "egg" },{ front: "el maíz", back: "corn" },
+    { front: "la papa", back: "potato" },{ front: "el pan", back: "bread" },
+    { front: "el queso", back: "cheese" },{ front: "la sopa", back: "soup" },
+    { front: "las verduras", back: "vegetables" },{ front: "la mantequilla", back: "butter" },
+    { front: "el helado", back: "ice cream" },{ front: "la torta", back: "cake" },
+    { front: "la manzana / la naranja / la banana", back: "apple / orange / banana" },
+    { front: "el agua / el café / el jugo / la leche / el refresco", back: "water / coffee / juice / milk / soda" },
+    { front: "beber / comer / desayunar / almorzar / cenar", back: "to drink / eat / have breakfast / have lunch / have dinner" },
+  ],
+  travel_vocab: [
+    { front: "el billete", back: "ticket" },{ front: "la bolsa", back: "bag" },
+    { front: "la guía turística", back: "travel guide" },{ front: "la maleta", back: "suitcase" },
+    { front: "el pasaporte", back: "passport" },
+    { front: "comprar recuerdos", back: "to buy souvenirs" },
+    { front: "enseñar el pasaporte", back: "to show your passport" },
+    { front: "facturar el equipaje", back: "to check the baggage" },
+    { front: "la agencia de viajes", back: "travel agency" },
+    { front: "la oficina de turismo", back: "tourist office" },
+    { front: "el banco / la biblioteca / el café", back: "bank / library / café" },
+    { front: "la calle / el hospital / la iglesia / la plaza", back: "street / hospital / church / square" },
+    { front: "cruzar la calle", back: "to cross the street" },
+    { front: "doblar a la derecha / izquierda", back: "to turn right / left" },
+    { front: "seguir recto", back: "to go straight ahead" },
+  ],
+  body_senses: [
+    { front: "la cabeza", back: "head" },{ front: "la espalda", back: "back" },
+    { front: "el estómago", back: "stomach" },{ front: "la garganta", back: "throat" },
+    { front: "las muelas / los oídos", back: "molars / inner ears" },
+    { front: "el brazo / la mano / el dedo", back: "arm / hand / finger" },
+    { front: "la pierna / el pie", back: "leg / foot" },
+    { front: "los ojos / la nariz / la boca", back: "eyes / nose / mouth" },
+    { front: "los dientes / el pelo", back: "teeth / hair" },
+    { front: "ver (yo veo)", back: "to see" },{ front: "oír (yo oigo)", back: "to hear" },
+    { front: "oler (yo huelo)", back: "to smell" },{ front: "decir (yo digo)", back: "to say/tell" },
+  ],
+  pastimes: [
+    { front: "bailar / cantar / actuar", back: "to dance / sing / act" },
+    { front: "caminar / nadar / pintar", back: "to walk / swim / paint" },
+    { front: "escribir mensajes", back: "to write text messages" },
+    { front: "escuchar música", back: "to listen to music" },
+    { front: "hacer deporte / practicar deportes", back: "to play sports" },
+    { front: "leer un libro", back: "to read a book" },
+    { front: "montar en bicicleta", back: "to ride a bike" },
+    { front: "tocar el piano", back: "to play the piano" },
+    { front: "viajar", back: "to travel" },
+  ],
+  clothing_shop: [
+    { front: "la blusa / la camisa / la camiseta", back: "blouse / shirt / T-shirt" },
+    { front: "la chaqueta / el suéter", back: "jacket / sweater" },
+    { front: "la falda / el vestido", back: "skirt / dress" },
+    { front: "los pantalones / los pantalones cortos", back: "pants / shorts" },
+    { front: "la bufanda / el gorro / los guantes / el sombrero", back: "scarf / cap / gloves / hat" },
+    { front: "las botas / las sandalias / los tenis / los zapatos", back: "boots / sandals / sneakers / shoes" },
+    { front: "los calcetines", back: "socks" },
+    { front: "ir de compras / mirar vitrinas", back: "to go shopping / to window-shop" },
+    { front: "comprar / vender", back: "to buy / to sell" },
+    { front: "el cliente / la vendedora", back: "customer / salesperson" },
+    { front: "la tienda de ropa / la zapatería", back: "clothing store / shoe store" },
+    { front: "abierto(a) / cerrado(a)", back: "open / closed" },
+  ],
+  health_illness: [
+    { front: "el dolor / la fiebre", back: "pain / fever" },
+    { front: "la gripe / el resfriado / la tos", back: "flu / cold / cough" },
+    { front: "la farmacia / el hospital", back: "pharmacy / hospital" },
+    { front: "el/la médico(a) / el/la enfermero(a)", back: "doctor / nurse" },
+    { front: "Estoy enfermo(a).", back: "I am sick." },
+    { front: "Me siento débil / bien / mal", back: "I feel weak / fine / bad" },
+    { front: "Me duele la garganta.", back: "My throat hurts. (singular → duele)" },
+    { front: "Me duelen los oídos.", back: "My ears hurt. (plural → duelen)" },
+    { front: "Tengo dolor de cabeza.", back: "I have a headache." },
+    { front: "duele vs. duelen", back: "duele = 1 body part\nduelen = 2+ body parts\n(works like gustar!)" },
+  ],
+  hygiene_products: [
+    { front: "el cepillo / el cepillo de dientes", back: "hairbrush / toothbrush" },
+    { front: "el champú / el gel", back: "shampoo / gel" },
+    { front: "la crema de afeitar / el desodorante", back: "shaving cream / deodorant" },
+    { front: "el jabón / la pasta de dientes", back: "soap / toothpaste" },
+    { front: "el peine / la toalla", back: "comb / towel" },
+  ],
+  sports_equip: [
+    { front: "el baloncesto / el béisbol / el boliche", back: "basketball / baseball / bowling" },
+    { front: "el fútbol / el fútbol americano", back: "soccer / football" },
+    { front: "el golf / la natación / el tenis / el voleibol", back: "golf / swimming / tennis / volleyball" },
+    { front: "el balón / la pelota / el bate", back: "ball (large) / ball (small) / bat" },
+    { front: "el casco / la raqueta / la red", back: "helmet / racket / net" },
+    { front: "el partido / el estadio / el equipo", back: "game / stadium / team" },
+    { front: "ganar / perder / competir", back: "to win / to lose / to compete" },
+  ],
+};
+
+const QUIZZES = {
+  preterite: [
+    { q: "Yo _____ (hablar) con mi mamá ayer.", a: "hablé", opts: ["hablé", "hablaba", "hablo", "hablaré"] },
+    { q: "-AR preterite endings: yo, tú, él", a: "-é, -aste, -ó", opts: ["-é, -aste, -ó", "-aba, -abas, -aba", "-o, -as, -a", "-é, -iste, -ió"] },
+    { q: "-ER/-IR preterite endings: yo, tú, él", a: "-í, -iste, -ió", opts: ["-í, -iste, -ió", "-é, -aste, -ó", "-ía, -ías, -ía", "-o, -es, -e"] },
+    { q: "Ellos _____ (comer) pizza anoche.", a: "comieron", opts: ["comieron", "comían", "comen", "comeron"] },
+    { q: "Tú _____ (escribir) una carta la semana pasada.", a: "escribiste", opts: ["escribiste", "escribías", "escribes", "escribió"] },
+    { q: "Yo _____ (jugar) al fútbol ayer.", a: "jugué", opts: ["jugué", "jugaba", "juego", "jugó"] },
+    { q: "Nosotros _____ (viajar) a México el año pasado.", a: "viajamos", opts: ["viajamos", "viajábamos", "viajemos", "viajan"] },
+    { q: "SER/IR in preterite: yo, tú, él", a: "fui, fuiste, fue", opts: ["fui, fuiste, fue", "era, eras, era", "soy, eres, es", "iba, ibas, iba"] },
+    { q: "Ella _____ (dormir) ocho horas anoche.", a: "durmió", opts: ["durmió", "dormía", "duerme", "dormió"] },
+  ],
+  imperfect: [
+    { q: "-AR imperfect endings: yo, tú, él", a: "-aba, -abas, -aba", opts: ["-aba, -abas, -aba", "-é, -aste, -ó", "-o, -as, -a", "-ía, -ías, -ía"] },
+    { q: "-ER/-IR imperfect endings: yo, tú, él", a: "-ía, -ías, -ía", opts: ["-ía, -ías, -ía", "-í, -iste, -ió", "-aba, -abas, -aba", "-o, -es, -e"] },
+    { q: "De niño, yo _____ (jugar) todos los días.", a: "jugaba", opts: ["jugaba", "jugué", "juego", "jugó"] },
+    { q: "Nosotros siempre _____ (comer) juntos.", a: "comíamos", opts: ["comíamos", "comimos", "comemos", "comeremos"] },
+    { q: "IR in the imperfect: yo, tú, él", a: "iba, ibas, iba", opts: ["iba, ibas, iba", "fui, fuiste, fue", "voy, vas, va", "iré, irás, irá"] },
+    { q: "Ella _____ (escuchar) música frecuentemente.", a: "escuchaba", opts: ["escuchaba", "escuchó", "escucha", "escuché"] },
+    { q: "Tú _____ (vivir) en Nueva York de niño.", a: "vivías", opts: ["vivías", "viviste", "vives", "vivirás"] },
+    { q: "Only 3 irregular verbs in imperfect:", a: "ser (era), ir (iba), ver (veía)", opts: ["ser (era), ir (iba), ver (veía)", "ser, estar, ir", "hacer, decir, ir", "tener, poner, venir"] },
+  ],
+  pret_vs_imp: [
+    { q: "\"Ayer\" signals which tense?", a: "Preterite", opts: ["Preterite", "Imperfect"] },
+    { q: "\"Todos los días\" signals which tense?", a: "Imperfect", opts: ["Preterite", "Imperfect"] },
+    { q: "\"De repente\" signals which tense?", a: "Preterite", opts: ["Preterite", "Imperfect"] },
+    { q: "\"Siempre\" signals which tense?", a: "Imperfect", opts: ["Preterite", "Imperfect"] },
+    { q: "\"La semana pasada\" signals which tense?", a: "Preterite", opts: ["Preterite", "Imperfect"] },
+    { q: "\"A menudo\" signals which tense?", a: "Imperfect", opts: ["Preterite", "Imperfect"] },
+    { q: "Completed one-time action = ?", a: "Preterite", opts: ["Preterite", "Imperfect"] },
+    { q: "Habitual/repeated past action = ?", a: "Imperfect", opts: ["Preterite", "Imperfect"] },
+  ],
+  commands_reg: [
+    { q: "Rule for regular tú commands:", a: "Conjugate to tú form, drop the -s", opts: ["Conjugate to tú form, drop the -s", "Use the yo form", "Use the infinitive", "Add -e to the stem"] },
+    { q: "Caminar → tú command", a: "camina", opts: ["camina", "caminas", "camine", "caminá"] },
+    { q: "Comer → tú command", a: "come", opts: ["come", "comes", "coma", "comé"] },
+    { q: "Escribir → tú command", a: "escribe", opts: ["escribe", "escribes", "escriba", "escribí"] },
+    { q: "Cerrar → tú command", a: "cierra", opts: ["cierra", "cierras", "cierre", "cerra"] },
+    { q: "Lavar → tú command", a: "lava", opts: ["lava", "lavas", "lave", "lavá"] },
+  ],
+  gustar_jugar: [
+    { q: "A mí ___ gusta la pizza.", a: "me", opts: ["me", "te", "le", "nos"] },
+    { q: "A ellos ___ gustan los deportes.", a: "les", opts: ["les", "le", "nos", "se"] },
+    { q: "Me gusta ___ (swim).", a: "nadar", opts: ["nadar", "nado", "nadando", "nada"] },
+    { q: "GUSTA or GUSTAN: ___ los libros", a: "gustan", opts: ["gustan", "gusta"] },
+    { q: "GUSTA or GUSTAN: ___ bailar", a: "gusta", opts: ["gusta", "gustan"] },
+    { q: "Yo _____ al tenis. (jugar)", a: "juego", opts: ["juego", "jugo", "jugar", "jugó"] },
+    { q: "Jugar uses which preposition before the sport?", a: "a (jugar a + el = al)", opts: ["a (jugar a + el = al)", "de", "en", "con"] },
+    { q: "Nosotros _____ al fútbol. (jugar)", a: "jugamos", opts: ["jugamos", "juegamos", "jugemos", "juegan"] },
+  ],
+  ir_a_inf: [
+    { q: "Yo _____ a estudiar mañana.", a: "voy", opts: ["voy", "va", "fui", "iba"] },
+    { q: "Ellos _____ a viajar a España.", a: "van", opts: ["van", "va", "vamos", "fueron"] },
+    { q: "Tú _____ a comer pizza esta noche.", a: "vas", opts: ["vas", "va", "voy", "van"] },
+    { q: "In 'ir a + infinitive', which verb is conjugated?", a: "Only ir", opts: ["Only ir", "Both verbs", "Only the second verb", "Neither"] },
+    { q: "Nosotros _____ a bailar.", a: "vamos", opts: ["vamos", "van", "va", "voy"] },
+  ],
+  present_prog: [
+    { q: "Present progressive formula:", a: "estar + gerundio (-ando/-iendo)", opts: ["estar + gerundio (-ando/-iendo)", "ser + infinitive", "ir a + infinitive", "haber + past participle"] },
+    { q: "Hablar → gerundio", a: "hablando", opts: ["hablando", "habliendo", "hablado", "hable"] },
+    { q: "Comer → gerundio", a: "comiendo", opts: ["comiendo", "comando", "comido", "coma"] },
+    { q: "Escribir → gerundio", a: "escribiendo", opts: ["escribiendo", "escribando", "escribido", "escriba"] },
+    { q: "Leer → gerundio (vowel stem!)", a: "leyendo", opts: ["leyendo", "leiendo", "leendo", "leyando"] },
+    { q: "Yo _____ _____ (estar/estudiar)", a: "estoy estudiando", opts: ["estoy estudiando", "soy estudiando", "estoy estudiar", "estuve estudiando"] },
+    { q: "Reflexive pronouns with present progressive go:", a: "Before estar OR attached to gerundio", opts: ["Before estar OR attached to gerundio", "Only before estar", "Only after gerundio", "Before the subject"] },
+  ],
+  yo_go_stem: [
+    { q: "hacer → yo", a: "hago", opts: ["hago", "haco", "hacio", "haceo"] },
+    { q: "poner → yo", a: "pongo", opts: ["pongo", "pono", "ponigo", "ponero"] },
+    { q: "traer → yo", a: "traigo", opts: ["traigo", "trao", "traero", "traeo"] },
+    { q: "salir → yo", a: "salgo", opts: ["salgo", "salo", "salero", "saleo"] },
+    { q: "oír → yo", a: "oigo", opts: ["oigo", "oyo", "oígo", "oiro"] },
+    { q: "decir → yo", a: "digo", opts: ["digo", "deco", "decío", "dicio"] },
+    { q: "venir → yo", a: "vengo", opts: ["vengo", "veno", "venío", "vieno"] },
+    { q: "tener → yo", a: "tengo", opts: ["tengo", "teno", "tenío", "tieno"] },
+    { q: "Stem e→ie: querer → yo", a: "quiero", opts: ["quiero", "quero", "querío", "quiere"] },
+    { q: "Stem o→ue: dormir → yo", a: "duermo", opts: ["duermo", "dormo", "dormío", "dormeo"] },
+    { q: "Stem e→i: pedir → yo", a: "pido", opts: ["pido", "pedo", "pedío", "piedo"] },
+  ],
+  dop_iop: [
+    { q: "Direct object pronouns (3rd person):", a: "lo, la, los, las", opts: ["lo, la, los, las", "le, les", "me, te, nos", "se"] },
+    { q: "Indirect object pronouns:", a: "me, te, le, nos, les", opts: ["me, te, le, nos, les", "lo, la, los, las", "mi, ti, él", "me, te, se"] },
+    { q: "¿Compras el pan? — Sí, yo __ compro.", a: "lo", opts: ["lo", "la", "le", "los"] },
+    { q: "Object pronouns go:", a: "Before conjugated verb OR attached to infinitive", opts: ["Before conjugated verb OR attached to infinitive", "Always after", "Always before", "Between two verbs"] },
+    { q: "Carlos __ trae el desayuno. (to me)", a: "me", opts: ["me", "le", "lo", "te"] },
+    { q: "¿Ves a las chicas? — No, no __ veo.", a: "las", opts: ["las", "los", "les", "la"] },
+    { q: "Quiero comprar un helado → ___ quiero comprar.", a: "Lo", opts: ["Lo", "La", "Le", "Los"] },
+  ],
+  neg_commands: [
+    { q: "Negative tú commands are based on:", a: "The yo form, swap to opposite endings", opts: ["The yo form, swap to opposite endings", "The tú form minus the -s", "The infinitive plus no", "The nosotros form"] },
+    { q: "Negative command endings for -AR verbs:", a: "-es (no compres)", opts: ["-es (no compres)", "-as (no compras)", "-is", "-os"] },
+    { q: "Negative command endings for -ER/-IR verbs:", a: "-as (no comas, no escribas)", opts: ["-as (no comas, no escribas)", "-es (no comes)", "-is", "-os"] },
+    { q: "\"Don't eat\" in Spanish:", a: "No comas", opts: ["No comas", "No comes", "No come", "No comás"] },
+    { q: "\"Don't write\" in Spanish:", a: "No escribas", opts: ["No escribas", "No escribes", "No escribe", "No escribís"] },
+    { q: "Key trick: -AR→___, -ER/-IR→___", a: "-AR→-es, -ER/-IR→-as (SWAP!)", opts: ["-AR→-es, -ER/-IR→-as (SWAP!)", "-AR→-as, -ER/-IR→-es", "-AR→-a, -ER/-IR→-e", "All get -es"] },
+  ],
+};
+
+/* 50-QUESTION PRACTICE EXAM */
+const PRACTICE_EXAM = [
+  { q: "Yo _____ (hablar) con ella ayer.", a: "hablé", opts: ["hablé", "hablaba", "hablo", "hablaré"] },
+  { q: "De niño, él siempre _____ (comer) mucho.", a: "comía", opts: ["comía", "comió", "come", "comerá"] },
+  { q: "\"Anoche\" signals which tense?", a: "Preterite", opts: ["Preterite", "Imperfect", "Present", "Future"] },
+  { q: "\"A menudo\" signals which tense?", a: "Imperfect", opts: ["Imperfect", "Preterite", "Present", "Future"] },
+  { q: "Me despierto = I _____ _____.", a: "wake up", opts: ["wake up", "go to bed", "get dressed", "take a shower"] },
+  { q: "Para lavarme el pelo, uso ___.", a: "el champú", opts: ["el champú", "el jabón", "el peine", "la toalla"] },
+  { q: "hacer → yo (present)", a: "hago", opts: ["hago", "haco", "haceo", "hacio"] },
+  { q: "Tú command of hablar:", a: "habla", opts: ["habla", "hablas", "hable", "hablá"] },
+  { q: "Irregular tú command of hacer:", a: "haz", opts: ["haz", "hace", "hac", "hacer"] },
+  { q: "A mí ___ gusta bailar.", a: "me", opts: ["me", "te", "le", "nos"] },
+  { q: "Nosotros _____ al baloncesto. (jugar)", a: "jugamos", opts: ["jugamos", "juegamos", "jugemos", "juegan"] },
+  { q: "Yo _____ a estudiar mañana. (ir a + inf)", a: "voy", opts: ["voy", "va", "fui", "iba"] },
+  { q: "Hablar → gerundio:", a: "hablando", opts: ["hablando", "habliendo", "habliando", "hablado"] },
+  { q: "Leer → gerundio:", a: "leyendo", opts: ["leyendo", "leiendo", "leendo", "leyando"] },
+  { q: "DOP for 'el libro': Yo ___ leo.", a: "lo", opts: ["lo", "la", "le", "los"] },
+  { q: "IOP: Carlos ___ trae flores a su mamá.", a: "le", opts: ["le", "lo", "la", "les"] },
+  { q: "\"Don't run\" = No _____.", a: "corras", opts: ["corras", "corres", "corre", "corrás"] },
+  { q: "\"La maleta\" means:", a: "suitcase", opts: ["suitcase", "ticket", "bag", "passport"] },
+  { q: "\"Me duele la cabeza\" means:", a: "My head hurts", opts: ["My head hurts", "I have a cold", "I feel fine", "My stomach hurts"] },
+  { q: "Nosotros _____ (ir) a la playa el verano pasado.", a: "fuimos", opts: ["fuimos", "íbamos", "vamos", "iremos"] },
+  { q: "Ellas _____ (ser) muy simpáticas de niñas.", a: "eran", opts: ["eran", "fueron", "son", "serán"] },
+  { q: "Yo _____ (estar) estudiando ahora.", a: "estoy", opts: ["estoy", "soy", "era", "fui"] },
+  { q: "\"El billete\" means:", a: "ticket", opts: ["ticket", "wallet", "bill", "passport"] },
+  { q: "\"La garganta\" is:", a: "throat", opts: ["throat", "stomach", "back", "head"] },
+  { q: "Stem-change: dormir → yo (present)", a: "duermo", opts: ["duermo", "dormo", "dormío", "dormeo"] },
+  { q: "traer → yo (present)", a: "traigo", opts: ["traigo", "trao", "traero", "trayo"] },
+  { q: "salir → yo (present)", a: "salgo", opts: ["salgo", "salo", "saleo", "salero"] },
+  { q: "Preterite -ER/-IR: nosotros ending", a: "-imos", opts: ["-imos", "-amos", "-ieron", "-emos"] },
+  { q: "Imperfect -AR: nosotros ending", a: "-ábamos", opts: ["-ábamos", "-amos", "-aban", "-íamos"] },
+  { q: "Yo _____ (vestirse) rápido. (reflexive, present)", a: "me visto", opts: ["me visto", "me vesto", "se visto", "me vestío"] },
+  { q: "\"Doblar a la izquierda\" means:", a: "to turn left", opts: ["to turn left", "to turn right", "to go straight", "to cross the street"] },
+  { q: "\"La zapatería\" is a:", a: "shoe store", opts: ["shoe store", "clothing store", "bakery", "pharmacy"] },
+  { q: "GUSTA or GUSTAN: Me _____ las frutas.", a: "gustan", opts: ["gustan", "gusta"] },
+  { q: "GUSTA or GUSTAN: Me _____ nadar.", a: "gusta", opts: ["gusta", "gustan"] },
+  { q: "Irregular tú command of decir:", a: "di", opts: ["di", "dice", "dec", "die"] },
+  { q: "Irregular tú command of salir:", a: "sal", opts: ["sal", "sale", "sali", "saler"] },
+  { q: "\"El resfriado\" means:", a: "cold (illness)", opts: ["cold (illness)", "flu", "fever", "cough"] },
+  { q: "\"La tos\" means:", a: "cough", opts: ["cough", "cold", "pain", "flu"] },
+  { q: "¿Ves a las chicas? — Sí, ___ veo.", a: "las", opts: ["las", "los", "les", "la"] },
+  { q: "Ella _____ (poner) la mesa ayer.", a: "puso", opts: ["puso", "ponió", "pone", "pongo"] },
+  { q: "Oír → gerundio:", a: "oyendo", opts: ["oyendo", "oiendo", "oíndo", "oyando"] },
+  { q: "\"Seguir recto\" means:", a: "go straight ahead", opts: ["go straight ahead", "turn right", "cross the street", "stop walking"] },
+  { q: "\"Me duelen los pies\" means:", a: "My feet hurt", opts: ["My feet hurt", "My foot hurts", "I feel weak", "My hands hurt"] },
+  { q: "Which is NOT a yo-go verb?", a: "comer (como)", opts: ["comer (como)", "hacer (hago)", "poner (pongo)", "salir (salgo)"] },
+  { q: "Reflexive pronoun for 'nosotros':", a: "nos", opts: ["nos", "se", "me", "os"] },
+  { q: "Tú _____ (acostarse) a las diez. (present)", a: "te acuestas", opts: ["te acuestas", "te acostas", "se acuesta", "me acuesto"] },
+  { q: "Ser preterite: ellos", a: "fueron", opts: ["fueron", "eran", "son", "serán"] },
+  { q: "Imperfect of ir: yo", a: "iba", opts: ["iba", "fui", "voy", "iré"] },
+  { q: "\"El casco\" means:", a: "helmet", opts: ["helmet", "bat", "net", "ball"] },
+  { q: "\"Ganar\" means:", a: "to win", opts: ["to win", "to lose", "to play", "to compete"] },
+];
+
+/* ───────── UTILS ───────── */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ───────── STYLES ───────── */
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@700&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',system-ui,sans-serif; background:#0f0f0f; color:#e8e8e8; }
+button { font-family:inherit; cursor:pointer; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
+@keyframes pop { 0%{transform:scale(0.8);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes confetti { 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(-60px) rotate(360deg);opacity:0} }
+@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(255,182,72,0.15)} 50%{box-shadow:0 0 40px rgba(255,182,72,0.3)} }
+
+.fade-up { animation: fadeUp 0.5s ease-out both; }
+.slide-in { animation: slideIn 0.4s ease-out both; }
+.pop-in { animation: pop 0.4s ease-out both; }
+
+.card-container {
+  perspective: 1000px;
+  cursor: pointer;
+}
+.card-inner {
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-front, .card-back {
+  backface-visibility: hidden;
+  position: absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:20px; padding:32px;
+}
+.card-back { transform: rotateY(180deg); }
+
+.topic-btn {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 16px 18px;
+  text-align: left;
+  display: flex; align-items: center; gap: 14px;
+  transition: all 0.25s ease;
+  color: #e8e8e8;
+  width: 100%;
+}
+.topic-btn:hover {
+  background: #222;
+  border-color: #FFB648;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,182,72,0.1);
+}
+
+.quiz-opt {
+  background: #1a1a1a;
+  border: 1.5px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 15px;
+  color: #e8e8e8;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.quiz-opt:hover:not(:disabled) {
+  border-color: #FFB648;
+  background: #1f1a10;
+}
+.quiz-opt.correct { background: #0a2e1a; border-color: #34d399; color: #34d399; }
+.quiz-opt.wrong { background: #2e0a0a; border-color: #f87171; color: #f87171; }
+
+.progress-bar {
+  height: 4px;
+  background: #2a2a2a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFB648, #FF6B6B);
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-quiz { background: #1a2744; color: #60a5fa; }
+.badge-flash { background: #2a2410; color: #FFB648; }
+.badge-exam { background: #2a1030; color: #c084fc; }
+`;
+
+/* ───────── COMPONENTS ───────── */
+function FlashcardView({ topic, onBack }) {
+  const cards = FLASHCARDS[topic];
+  const [idx, setIdx] = React.useState(0);
+  const [flipped, setFlipped] = React.useState(false);
+  const [order, setOrder] = React.useState(() => shuffle(cards.map((_,i) => i)));
+  const [score, setScore] = React.useState({ knew:0, missed:0 });
+
+  const reset = () => { setOrder(shuffle(cards.map((_,i) => i))); setIdx(0); setFlipped(false); setScore({knew:0,missed:0}); };
+  const card = cards[order[idx]];
+  const done = idx >= order.length;
+  const pct = done ? Math.round((score.knew/order.length)*100) : 0;
+
+  if (done) return (
+    <div className="pop-in" style={{textAlign:"center",padding:48}}>
+      <div style={{fontSize:48,marginBottom:12}}>{pct >= 80 ? "🎉" : "💪"}</div>
+      <div style={{fontSize:28,fontWeight:800,fontFamily:"'Space Grotesk',sans-serif",color:pct>=80?"#34d399":"#f87171"}}>{pct}%</div>
+      <div style={{fontSize:15,color:"#888",margin:"8px 0 24px"}}>✅ {score.knew} knew &nbsp;·&nbsp; ❌ {score.missed} missed</div>
+      <button onClick={reset} style={{background:"#FFB648",color:"#000",border:"none",borderRadius:10,padding:"12px 28px",fontWeight:700,fontSize:15}}>Go Again</button>
+    </div>
+  );
+
+  return (
+    <div className="fade-up" style={{padding:20}}>
+      <div className="progress-bar" style={{marginBottom:20}}><div className="progress-fill" style={{width:`${((idx)/order.length)*100}%`}}/></div>
+      <div style={{fontSize:13,color:"#666",marginBottom:16,textAlign:"center"}}>Card {idx+1} of {order.length}</div>
+      <div className="card-container" onClick={()=>setFlipped(!flipped)} style={{height:220,marginBottom:24}}>
+        <div className={`card-inner ${flipped?"flipped":""}`} style={{width:"100%",height:"100%"}}>
+          <div className="card-front" style={{background:"linear-gradient(135deg,#1a1a1a,#252525)",border:"1px solid #333"}}>
+            <span style={{fontSize:22,fontWeight:700,fontFamily:"'Space Grotesk',sans-serif",color:"#FFB648"}}>{card.front}</span>
+          </div>
+          <div className="card-back" style={{background:"linear-gradient(135deg,#0a2e1a,#1a1a1a)",border:"1px solid #34d399"}}>
+            <span style={{fontSize:16,fontWeight:500,whiteSpace:"pre-wrap",lineHeight:1.6,textAlign:"center",color:"#d1fae5"}}>{card.back}</span>
+          </div>
+        </div>
+      </div>
+      {!flipped && <div style={{textAlign:"center",fontSize:12,color:"#555"}}>Tap to flip</div>}
+      {flipped && (
+        <div className="pop-in" style={{display:"flex",gap:12,justifyContent:"center"}}>
+          <button onClick={()=>{setScore(s=>({...s,knew:s.knew+1}));setFlipped(false);setIdx(i=>i+1)}} style={{background:"#0a2e1a",color:"#34d399",border:"1px solid #34d399",borderRadius:10,padding:"10px 24px",fontWeight:700,fontSize:14}}>✅ Knew it</button>
+          <button onClick={()=>{setScore(s=>({...s,missed:s.missed+1}));setFlipped(false);setIdx(i=>i+1)}} style={{background:"#2e0a0a",color:"#f87171",border:"1px solid #f87171",borderRadius:10,padding:"10px 24px",fontWeight:700,fontSize:14}}>❌ Missed</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function QuizView({ questions, onBack, title }) {
+  const [order, setOrder] = React.useState(() => shuffle(questions.map((_,i) => i)));
+  const [idx, setIdx] = React.useState(0);
+  const [selected, setSelected] = React.useState(null);
+  const [score, setScore] = React.useState(0);
+  const [showResult, setShowResult] = React.useState(false);
+  const shuffledOpts = React.useRef({});
+
+  const reset = () => { setOrder(shuffle(questions.map((_,i) => i))); setIdx(0); setSelected(null); setScore(0); setShowResult(false); shuffledOpts.current={}; };
+  const done = idx >= order.length;
+
+  if (done) {
+    const pct = Math.round((score/order.length)*100);
+    return (
+      <div className="pop-in" style={{textAlign:"center",padding:48}}>
+        <div style={{fontSize:48,marginBottom:12}}>{pct>=90?"🏆":pct>=80?"🎉":pct>=60?"📚":"💪"}</div>
+        <div style={{fontSize:36,fontWeight:800,fontFamily:"'Space Grotesk',sans-serif",color:pct>=80?"#34d399":pct>=60?"#FFB648":"#f87171"}}>{pct}%</div>
+        <div style={{fontSize:16,color:"#888",margin:"8px 0 4px"}}>{score}/{order.length} correct</div>
+        <div style={{fontSize:13,color:"#555",marginBottom:28}}>{pct>=90?"Incredible!":pct>=80?"Great job!":pct>=60?"Getting there!":"Keep studying!"}</div>
+        <button onClick={reset} style={{background:"#FFB648",color:"#000",border:"none",borderRadius:10,padding:"12px 28px",fontWeight:700,fontSize:15}}>Try Again</button>
+      </div>
+    );
+  }
+
+  const q = questions[order[idx]];
+  if (!shuffledOpts.current[idx]) shuffledOpts.current[idx] = shuffle(q.opts);
+  const opts = shuffledOpts.current[idx];
+
+  const handleSelect = (opt) => {
+    if (selected !== null) return;
+    setSelected(opt);
+    setShowResult(true);
+    if (opt === q.a) setScore(s => s + 1);
+    setTimeout(() => { setSelected(null); setShowResult(false); setIdx(i => i + 1); }, 1400);
+  };
+
+  return (
+    <div className="fade-up" style={{padding:20}}>
+      <div className="progress-bar" style={{marginBottom:16}}><div className="progress-fill" style={{width:`${(idx/order.length)*100}%`}}/></div>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#666",marginBottom:16}}>
+        <span>Q{idx+1} of {order.length}</span><span>Score: {score}</span>
+      </div>
+      <div className="slide-in" key={idx} style={{background:"#1a1a1a",borderRadius:16,padding:20,border:"1px solid #2a2a2a",marginBottom:20,fontSize:17,fontWeight:600,lineHeight:1.5}}>
+        {q.q}
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {opts.map((opt,i) => (
+          <button key={opt} className={`quiz-opt ${showResult && opt===q.a?"correct":""} ${showResult && opt===selected && opt!==q.a?"wrong":""}`}
+            onClick={()=>handleSelect(opt)} disabled={selected!==null}
+            style={{animationDelay:`${i*0.05}s`}}>{opt}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Header({ title, onBack }) {
+  return (
+    <div style={{background:"linear-gradient(135deg,#1a1a1a,#0f0f0f)",padding:"14px 20px",display:"flex",alignItems:"center",gap:12,borderBottom:"1px solid #222"}}>
+      <button onClick={onBack} style={{background:"rgba(255,182,72,0.1)",border:"1px solid #FFB64833",borderRadius:8,padding:"6px 14px",color:"#FFB648",fontSize:13,fontWeight:600}}>← Back</button>
+      <span style={{color:"#fff",fontWeight:700,fontSize:15}}>{title}</span>
+    </div>
+  );
+}
+
+function App() {
+  const [view, setView] = React.useState("home");
+  const [currentTopic, setCurrentTopic] = React.useState(null);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(()=>{setMounted(true)},[]);
+
+  const openTopic = (t) => { setCurrentTopic(t); setView("study"); };
+
+  if (view === "exam") {
+    return (
+      <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:"#0f0f0f"}}>
+        <style>{CSS}</style>
+        <Header title="📝 Practice Exam — 50 Questions" onBack={()=>setView("home")}/>
+        <QuizView questions={PRACTICE_EXAM} title="Practice Exam"/>
+      </div>
+    );
+  }
+
+  if (view === "study" && currentTopic) {
+    const info = TOPICS[currentTopic];
+    return (
+      <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:"#0f0f0f"}}>
+        <style>{CSS}</style>
+        <Header title={`${info.icon} ${info.name}`} onBack={()=>setView("home")}/>
+        {info.type === "flashcard" && <FlashcardView topic={currentTopic}/>}
+        {info.type === "quiz" && <QuizView questions={QUIZZES[currentTopic]}/>}
+      </div>
+    );
+  }
+
+  return (
+    <div style={{maxWidth:520,margin:"0 auto",minHeight:"100vh",background:"#0f0f0f"}}>
+      <style>{CSS}</style>
+      {/* HERO */}
+      <div className={mounted?"fade-up":""} style={{padding:"40px 24px 32px",textAlign:"center",background:"linear-gradient(180deg,#1a1200 0%,#0f0f0f 100%)"}}>
+        <div style={{fontSize:42,fontWeight:800,fontFamily:"'Space Grotesk',sans-serif",color:"#FFB648",letterSpacing:-1,lineHeight:1.1}}>
+          Español II
+        </div>
+        <div style={{fontSize:14,color:"#888",marginTop:8,letterSpacing:1,textTransform:"uppercase"}}>Final Exam Study Hub</div>
+        <div style={{width:60,height:3,background:"linear-gradient(90deg,#FFB648,#FF6B6B)",margin:"16px auto 0",borderRadius:2}}/>
+      </div>
+
+      {/* PRACTICE EXAM BANNER */}
+      <div style={{padding:"0 16px",marginBottom:20}}>
+        <button onClick={()=>setView("exam")} className={mounted?"fade-up":""}
+          style={{width:"100%",background:"linear-gradient(135deg,#2a1030,#1a1040)",border:"1px solid #7c3aed44",borderRadius:16,padding:"20px 20px",textAlign:"left",color:"#e8e8e8",animationDelay:"0.1s",position:"relative",overflow:"hidden"}}>
+          <div style={{fontSize:11,fontWeight:700,color:"#c084fc",letterSpacing:1,textTransform:"uppercase",marginBottom:6}}>🔥 Practice Exam</div>
+          <div style={{fontSize:18,fontWeight:800,fontFamily:"'Space Grotesk',sans-serif"}}>50-Question Final Review</div>
+          <div style={{fontSize:13,color:"#888",marginTop:4}}>Covers every topic · Timed feel · Challenging</div>
+          <div style={{position:"absolute",right:20,top:"50%",transform:"translateY(-50%)",fontSize:28,opacity:0.3}}>→</div>
+        </button>
+      </div>
+
+      {/* TOPICS */}
+      <div style={{padding:"0 16px 16px"}}>
+        <div style={{fontSize:12,fontWeight:700,color:"#666",letterSpacing:1,textTransform:"uppercase",marginBottom:12}}>Study by Topic</div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {Object.entries(TOPICS).map(([key, val], i) => (
+            <button key={key} onClick={()=>openTopic(key)} className={`topic-btn ${mounted?"slide-in":""}`} style={{animationDelay:`${0.15+i*0.03}s`}}>
+              <span style={{fontSize:20,width:32,textAlign:"center"}}>{val.icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:600,fontSize:14}}>{val.name}</div>
+              </div>
+              <span className={`badge ${val.type==="quiz"?"badge-quiz":"badge-flash"}`}>
+                {val.type==="quiz"?"quiz":"cards"}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* CHEAT SHEET */}
+      <div className={mounted?"fade-up":""} style={{margin:"8px 16px 32px",padding:20,background:"#1a1a1a",borderRadius:16,border:"1px solid #2a2a2a",fontSize:13,lineHeight:1.7,color:"#aaa",animationDelay:"0.5s"}}>
+        <div style={{fontSize:14,fontWeight:800,color:"#FFB648",marginBottom:12,fontFamily:"'Space Grotesk',sans-serif"}}>🔑 Cheat Sheet</div>
+        <div style={{color:"#888"}}>
+          <b style={{color:"#ccc"}}>Pret -AR:</b> -é, -aste, -ó, -amos, -aron<br/>
+          <b style={{color:"#ccc"}}>Pret -ER/-IR:</b> -í, -iste, -ió, -imos, -ieron<br/>
+          <b style={{color:"#ccc"}}>Imp -AR:</b> -aba, -abas, -aba, -ábamos, -aban<br/>
+          <b style={{color:"#ccc"}}>Imp -ER/-IR:</b> -ía, -ías, -ía, -íamos, -ían<br/>
+          <b style={{color:"#ccc"}}>Ser/Ir Pret:</b> fui, fuiste, fue, fuimos, fueron<br/>
+          <b style={{color:"#ccc"}}>Ir Imp:</b> iba, ibas, iba, íbamos, iban<br/><br/>
+          <b style={{color:"#ccc"}}>Irreg. tú:</b> ven, ten, sal, haz, pon, di, sé, ve<br/>
+          <b style={{color:"#ccc"}}>Neg. tú:</b> yo form → swap (-AR→-es, -ER/-IR→-as)<br/>
+          <b style={{color:"#ccc"}}>Yo-go:</b> hago, pongo, traigo, salgo, oigo, digo, vengo, tengo<br/>
+          <b style={{color:"#ccc"}}>Gerundio:</b> -AR→-ando · -ER/-IR→-iendo · vowel→-yendo<br/>
+          <b style={{color:"#ccc"}}>DOPs:</b> lo, la, los, las · <b style={{color:"#ccc"}}>IOPs:</b> me, te, le, nos, les<br/>
+          <b style={{color:"#ccc"}}>Doler:</b> like gustar → duele (1) / duelen (2+)<br/>
+          <b style={{color:"#ccc"}}>Jugar:</b> jugar + a + el = al
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
+</body>
+</html>
